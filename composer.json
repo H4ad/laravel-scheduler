@@ -1,0 +1,23 @@
+{
+    "name": "h4ad/laravel-scheduler",
+    "description": "Biblioteca para o Laravel para auxiliar com agendamento (ex: de consultas odontologicas).",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Vinicius Lourenço",
+            "email": "vinicius.cardoso23@etec.sp.gov.br"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "h4ad\\laravel-scheduler\\": "src/"
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^3.8@dev",
+        "phpunit/phpunit": "^7.4@dev"
+    }
+}
