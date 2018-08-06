@@ -13,7 +13,7 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "h4ad\\laravel-scheduler\\": "src/"
+            "H4ad\\Scheduler\\": "src/Scheduler"
         }
     },
     "require-dev": {
