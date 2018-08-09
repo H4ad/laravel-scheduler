@@ -1,4 +1,4 @@
-<?php namespace H4ad\Scheduler;
+<?php namespace H4ad\Scheduler\Facades;
 
 /**
  * Esse arquivo faz parte do Scheduler,
@@ -10,7 +10,7 @@
 
 use Illuminate\Support\Facades\Facade;
 
-class EntrustFacade extends Facade
+class Scheduler extends Facade
 {
     /**
      * Get the registered name of the component.
