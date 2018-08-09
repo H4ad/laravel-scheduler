@@ -16,6 +16,11 @@ return [
 	'schedules_table' => 'schedules',
 
 	/**
+	 * Define o nome da tabela que será gerada para os status do horários agendados.
+	 */
+	'schedule_status_table' => 'schedule_status'
+
+	/**
 	 * Configuração que habilita ou desabilita mensagens de erro ao tentar agendar
 	 * um horário que já foi agendado.
 	 *
