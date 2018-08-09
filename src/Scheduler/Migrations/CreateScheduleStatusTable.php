@@ -24,7 +24,7 @@ class CreateScheduleStatusTable extends Migration
     {
         Schema::create(Config::get('schedule_status_table'), function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->softDeletes();
         });

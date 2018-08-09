@@ -31,4 +31,33 @@ class Schedule extends Model
     protected $dates = [
     	'start_at', 'end_at', 'deleted_at'
     ];
+
+    /**
+     * Seta um status para o horário agendado.
+     *
+     * @param int|string $status Pode ser passado o ID do status ou seu nome para seta-lo no horário.
+     */
+    public function setStatus($name)
+    {
+    	$this->fill($this->parseStatusKey($name))->save();
+    }
+
+    /**
+     * Retorna o ID do status caso passem o nome do status.
+     *
+     * @param  int|string $key ID ou o nome do status.
+     * @return array
+     */
+    public function parseStatusKey($key)
+    {
+    	if(is_int($key))
+    		return ['id' => $key];
+
+    	$status = ScheduleStatus::where('name', $name)->first();
+
+    	if(is_null($status))
+    		throw (new ModelNotFoundException)->setModel(ScheduleStatus::class, $name);
+
+    	return ['id' => $status->id];
+    }
 }
