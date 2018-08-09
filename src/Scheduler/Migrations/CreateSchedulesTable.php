@@ -1,4 +1,4 @@
-<?php
+<?php namespace H4ad\Scheduler\Migrations;
 
 /**
  * Esse arquivo faz parte do Scheduler,
@@ -8,6 +8,7 @@
  * @package H4ad\Scheduler
  */
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -21,7 +22,7 @@ class CreateSchedulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create(Config::get('schedules_table'), function (Blueprint $table) {
             $table->increments('id');
             $table->string('model_type');
             $table->integer('model_id');
@@ -40,6 +41,6 @@ class CreateSchedulesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('schedules');
+        Schema::drop(Config::get('schedules_table'));
     }
 }
