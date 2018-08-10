@@ -11,20 +11,24 @@
 interface SchedulerModelInterface
 {
 	/**
-     * Horários pertencem ao pai dessa trait.
+     * Retorna apenas os horários que possuem o mesmo [model_type] do [parent] dessa [trait].
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
 	public function schedules();
 
 	/**
-	 * Agenda um horário.
+	 * Agenda um horário para esta model.
 	 *
 	 * @param string|Carbon\Carbon $start_at	Data em que será agendado, pode ser em string ou em numa classe Carbon.
 	 * @param string|Carbon\Carbon|int $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon
 	 *                                    ou em int(sendo considerado os minutos de duração).
 	 * @param int $status	Status desse horário ao ser agendado.
 	 * @return \H4ad\Scheduler\Models\Schedule
+	 *
+	 * @throws \H4ad\Scheduler\Exceptions\CantAddWithoutEnd
+	 * @throws \H4ad\Scheduler\Exceptions\CantAddWithSameStartAt
+	 * @throws \H4ad\Scheduler\Exceptions\EndCantBeforeStart
 	 */
 	public function addSchedule($start_at, $end_at = null, $status = null);
 

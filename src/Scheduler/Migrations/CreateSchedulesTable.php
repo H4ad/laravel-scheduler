@@ -27,7 +27,7 @@ class CreateSchedulesTable extends Migration
             $table->string('model_type');
             $table->integer('model_id');
             $table->timestamp('start_at');
-            $table->timestamp('end_at');
+            $table->timestamp('end_at')->nullable();
             $table->integer('status')->nullable();
             $table->timestamps();
             $table->softDeletes();

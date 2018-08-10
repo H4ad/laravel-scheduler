@@ -10,16 +10,16 @@
 
 use Symfony\Component\HttpFoundation\Response;
 
-class DoesNotBelong extends CustomException
+class CantAddWithoutEnd extends CustomException
 {
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected $trans = 'does_not_belong';
+	protected $trans = 'cant_add_without_end';
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected $statusCode = Response::HTTP_FORBIDDEN;
+	protected $statusCode = Response::HTTP_BAD_REQUEST;
 }

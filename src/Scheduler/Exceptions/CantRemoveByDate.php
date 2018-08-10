@@ -1,7 +1,5 @@
 <?php namespace H4ad\Scheduler\Exceptions;
 
-use Symfony\Component\HttpFoundation\Response;
-
 /**
  * Esse arquivo faz parte do Scheduler,
  * uma biblioteca para auxiliar com agendamentos.
@@ -9,6 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
  * @license MIT
  * @package H4ad\Scheduler
  */
+
+use Symfony\Component\HttpFoundation\Response;
 
 class CantRemoveByDate extends CustomException
 {
