@@ -36,7 +36,7 @@ trait SchedulerModelTrait
 	 *
 	 * @param string|Carbon\Carbon $start_at	Data em que será agendado, pode ser em string ou em numa classe Carbon.
 	 * @param string|Carbon\Carbon|int $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon
-	 *                                    ou em int(sendo considerado os minutos de duração).
+	 *                                           ou em int(sendo considerado os minutos de duração).
 	 * @param int $status	Status desse horário ao ser agendado.
 	 * @return \H4ad\Scheduler\Models\Schedule
 	 *
