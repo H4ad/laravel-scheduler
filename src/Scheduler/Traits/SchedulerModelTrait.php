@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\Config;
 trait SchedulerModelTrait
 {
 	/**
-     * Horários pertencem ao pai.
+     * Retorna apenas os horários que possuem o mesmo [model_type] do [parent] dessa [trait].
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
 	public function schedules()
 	{
-		return $this->belongsTo(Config::get('schedules_table'), 'model_id');
+		return $this->belongsTo(Config::get('schedules_table'), 'model_id')->where('model_type', get_parent_class($this));
 	}
 }
