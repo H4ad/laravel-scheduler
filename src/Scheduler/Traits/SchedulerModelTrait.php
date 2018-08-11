@@ -51,7 +51,7 @@ trait SchedulerModelTrait
 		if(!Config::get('enable_schedule_without_end') && is_null($end_at))
 			throw new CantAddWithoutEnd;
 
-		if(Config::get('enable_schedule_conflict') && !is_null(Schedule::where('start_at', $start_at)->first()))
+		if(Config::get('enable_schedule_conflict') && !is_null(Schedule::byStartAt($start_at)->first()))
 			throw new CantAddWithSameStartAt;
 
 		if(is_string($start_at))
