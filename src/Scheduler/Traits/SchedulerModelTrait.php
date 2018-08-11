@@ -11,6 +11,8 @@
 use Carbon\Carbon;
 use H4ad\Scheduler\Models\Schedule;
 use Illuminate\Support\Facades\Config;
+use H4ad\Scheduler\Exceptions\DoesNotBelong;
+use H4ad\Scheduler\Exceptions\CantRemoveByDate;
 use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
 use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
 use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
@@ -61,12 +63,43 @@ trait SchedulerModelTrait
 		if(is_int($end_at))
 			$end_at = $start_at->addMinutes($end_at);
 
-		if($start_at->ls($end_at))
+		if($start_at->lessThan($end_at))
 			throw new EndCantBeforeStart;
 
 		$model_id = $this->getKey();
 		$model_type = get_parent_class($this);
 
 		return Schedule::create(compact('start_at', 'end_at', 'status', 'model_id', 'model_type'));
+	}
+
+	/**
+	 * Remove um horário agendado pelo seu ID ou pelo horário em que foi marcado.
+	 * Caso a configuração "enable_schedule_conflict" estiver desabilitada, será lançado uma exceção
+	 * se for tentado remover um horário agendado pela data de quando foi marcado.
+	 *
+	 * @param  int|string|Carbon\Carbon $schedule    Horário agendado.
+	 * @return bool|null
+	 *
+	 * @throws \H4ad\Scheduler\Exceptions\DoesNotBelong
+	 * @throws \H4ad\Scheduler\Exceptions\CantRemoveByDate
+	 */
+	public function removeSchedule($schedule)
+	{
+		if(Config::get('enable_schedule_conflict') && !is_int($schedule))
+			throw new CantRemoveByDate;
+
+		if(is_int($schedule))
+			$schedule = Schedule::find($schedule);
+
+		if(is_string($schedule) || $schedule instanceof Carbon)
+			$schedule = Schedule::byStartAt($schedule)->first();
+
+		if(is_null($schedule))
+			return;
+
+		if($schedule->model_type != get_parent_class($this))
+			throw new DoesNotBelong;
+
+		return $schedule->delete();
 	}
 }
