@@ -60,4 +60,16 @@ class Schedule extends Model
 
     	return ['id' => $status->id];
     }
+
+    /**
+     * Escopo de uma consulta que busca horarios pela data de início.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed $start_at
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeByStartAt($query, $start_at)
+    {
+        return $query->where('start_at', $start_at);
+    }
 }
