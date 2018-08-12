@@ -77,7 +77,7 @@ class CustomException extends \Exception
     public function render()
     {
         return response()->json([
-            'messages' => trans('exceptions.'. $this->trans, $this->parseValues())
+            'messages' => trans('scheduler::exceptions.'. $this->trans, $this->parseValues())
         ], $this->statusCode);
     }
 
@@ -114,7 +114,7 @@ class CustomException extends \Exception
         if(is_object($this->model))
             $this->model = get_class($this->model);
 
-        return collect(trans('exceptions.aliases.'. $this->aliastype))->search($this->model) ?: 'Recurso';
+        return collect(trans('scheduler::exceptions.aliases.'. $this->aliastype))->search($this->model) ?: 'Recurso';
     }
 
     /**
