@@ -116,4 +116,16 @@ class CustomException extends \Exception
 
         return collect(trans('exceptions.aliases.'. $this->aliastype))->search($this->model) ?: 'Recurso';
     }
+
+    /**
+     * Seta os valores.
+     *
+     * @param mixed $values
+     */
+    public function setValues($values)
+    {
+        $this->values = $values;
+
+        return $this;
+    }
 }
