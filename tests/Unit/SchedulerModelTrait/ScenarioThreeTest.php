@@ -1,11 +1,5 @@
 <?php namespace H4ad\Scheduler\Tests\Unit;
 
-use Illuminate\Support\Carbon;
-use H4ad\Scheduler\Tests\TestCase;
-use Illuminate\Support\Facades\Config;
-use H4ad\Scheduler\Tests\Unit\SampleModel;
-use H4ad\Scheduler\Tests\Unit\ScenarioOneTest;
-
 /**
  * Esse arquivo faz parte do Scheduler,
  * uma biblioteca para auxiliar com agendamentos.
@@ -13,6 +7,12 @@ use H4ad\Scheduler\Tests\Unit\ScenarioOneTest;
  * @license MIT
  * @package H4ad\Scheduler
  */
+
+use Illuminate\Support\Carbon;
+use H4ad\Scheduler\Tests\TestCase;
+use Illuminate\Support\Facades\Config;
+use H4ad\Scheduler\Tests\Unit\SampleModel;
+use H4ad\Scheduler\Tests\Unit\ScenarioOneTest;
 
 /**
  * Configurações para os testes dessa classe:

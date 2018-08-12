@@ -9,13 +9,15 @@
  */
 
 use Carbon\Carbon;
-use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
+use H4ad\Scheduler\Tests\TestCase;
+use Illuminate\Support\Facades\Config;
+use H4ad\Scheduler\Models\ScheduleStatus;
+use H4ad\Scheduler\Tests\Unit\SampleModel;
+use H4ad\Scheduler\Exceptions\ModelNotFound;
+use H4ad\Scheduler\Exceptions\DoesNotBelong;
 use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
 use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
-use H4ad\Scheduler\Models\ScheduleStatus;
-use H4ad\Scheduler\Tests\TestCase;
-use H4ad\Scheduler\Tests\Unit\SampleModel;
-use Illuminate\Support\Facades\Config;
+use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
 
 /**
  * Configurações para os testes dessa classe:
@@ -125,5 +127,67 @@ class ScenarioOneTest extends TestCase
     {
     	$this->expectException(EndCantBeforeStart::class);
     	$this->sampleModel->addSchedule(Carbon::now(), Carbon::now()->subMinutes(30));
+    }
+
+    /**
+     * Testes para o método de remover um horário.
+     */
+
+    /**
+     * Testa a remoção de um horário pelo seu id.
+     *
+     * @return void
+     */
+    public function testRemoveScheduleById()
+    {
+        $schedule = $this->sampleModel->addSchedule(Carbon::now(), Carbon::now()->addMinutes(30));
+        $this->assertEquals(true, $this->sampleModel->removeSchedule($schedule->id));
+    }
+
+    /**
+     * Testa a remoção de um horário pela sua data de início em string.
+     *
+     * @return void
+     */
+    public function testRemoveScheduleByDateString()
+    {
+        $schedule = $this->sampleModel->addSchedule(Carbon::now(), Carbon::now()->addMinutes(30));
+        $this->assertEquals(true, $this->sampleModel->removeSchedule($schedule->start_at->toDateTimeString()));
+    }
+
+    /**
+     * Testa a remoção de um horário pela sua data de início em Carbon.
+     *
+     * @return void
+     */
+    public function testRemoveScheduleByDateCarbon()
+    {
+        $schedule = $this->sampleModel->addSchedule(Carbon::now(), Carbon::now()->addMinutes(30));
+        $this->assertEquals(true, $this->sampleModel->removeSchedule($schedule->start_at));
+    }
+
+    /**
+     * Testa a remoção de um horário registrado por uma model por outra model com implementação
+     * do SchedulerModelTrait.
+     *
+     * @return void
+     */
+    public function testRemoveScheduleOfOtherModel()
+    {
+        $scheduleFake = $this->sampleModelFake->addSchedule(Carbon::now(), Carbon::now()->addMinutes(30));
+
+        $this->expectException(DoesNotBelong::class);
+        $this->sampleModel->removeSchedule($scheduleFake->id);
+    }
+
+    /**
+     * Testa a remoção de um horário que não existe.
+     *
+     * @return void
+     */
+    public function testRemoveScheduleInexistent()
+    {
+        $this->expectException(ModelNotFound::class);
+        $this->sampleModel->removeSchedule(0);
     }
 }

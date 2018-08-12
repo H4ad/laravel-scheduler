@@ -8,10 +8,11 @@
  * @package H4ad\Scheduler
  */
 
-use Illuminate\Support\Facades\Config;
 use H4ad\Scheduler\Models\ScheduleStatus;
-use Illuminate\Database\Schema\Blueprint;
 use H4ad\Scheduler\Tests\Unit\SampleModel;
+use H4ad\Scheduler\Tests\Unit\SampleModelFake;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Config;
 use Orchestra\Testbench\TestCase as OrchestralTestCase;
 
 class TestCase extends OrchestralTestCase
@@ -24,6 +25,13 @@ class TestCase extends OrchestralTestCase
     protected $sampleModel;
 
     /**
+     * Model usada de exemplo para testar os métodos da Trait.
+     *
+     * @var SampleModel
+     */
+    protected $sampleModelFake;
+
+    /**
      * Setup the test environment.
      */
     protected function setUp(): void
@@ -33,6 +41,7 @@ class TestCase extends OrchestralTestCase
         $this->runTestMigrations();
 
         $this->sampleModel = SampleModel::create();
+        $this->sampleModelFake = SampleModelFake::create();
     }
 
     /**

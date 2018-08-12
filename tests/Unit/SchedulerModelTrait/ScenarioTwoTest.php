@@ -1,10 +1,5 @@
 <?php namespace H4ad\Scheduler\Tests\Unit;
 
-use H4ad\Scheduler\Tests\TestCase;
-use Illuminate\Support\Facades\Config;
-use H4ad\Scheduler\Tests\Unit\SampleModel;
-use H4ad\Scheduler\Tests\Unit\ScenarioOneTest;
-
 /**
  * Esse arquivo faz parte do Scheduler,
  * uma biblioteca para auxiliar com agendamentos.
@@ -12,6 +7,13 @@ use H4ad\Scheduler\Tests\Unit\ScenarioOneTest;
  * @license MIT
  * @package H4ad\Scheduler
  */
+
+use Illuminate\Support\Carbon;
+use H4ad\Scheduler\Tests\TestCase;
+use Illuminate\Support\Facades\Config;
+use H4ad\Scheduler\Tests\Unit\SampleModel;
+use H4ad\Scheduler\Tests\Unit\ScenarioOneTest;
+use H4ad\Scheduler\Exceptions\CantRemoveByDate;
 
 /**
  * Configurações para os testes dessa classe:
@@ -53,5 +55,33 @@ class ScenarioTwoTest extends ScenarioOneTest
 
         $duplicated = $this->sampleModel->addSchedule('2018-07-11 08:00:00', 45);
         $this->assertDatabaseHas(Config::get('scheduler.schedules_table'), $duplicated->toArray());
+    }
+
+    /**
+     * Testa a remoção de um horário pela sua data de início em string
+     * com as configurações de [enable_schedule_conflict] desabilitada.
+     *
+     * @return void
+     */
+    public function testRemoveScheduleByDateString()
+    {
+        $schedule = $this->sampleModel->addSchedule(Carbon::now(), Carbon::now()->addMinutes(30));
+
+        $this->expectException(CantRemoveByDate::class);
+        $this->sampleModel->removeSchedule($schedule->start_at->toDateTimeString());
+    }
+
+    /**
+     * Testa a remoção de um horário pela sua data de início em Carbon
+     * com as configurações de [enable_schedule_conflict] desabilitada.
+     *
+     * @return void
+     */
+    public function testRemoveScheduleByDateCarbon()
+    {
+        $schedule = $this->sampleModel->addSchedule(Carbon::now(), Carbon::now()->addMinutes(30));
+
+        $this->expectException(CantRemoveByDate::class);
+        $this->sampleModel->removeSchedule($schedule->start_at);
     }
 }
