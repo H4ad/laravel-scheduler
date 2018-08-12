@@ -93,7 +93,7 @@ trait SchedulerModelTrait
 			throw new CantRemoveByDate;
 
 		if(is_int($schedule))
-			$schedule = Schedule::findOrFail($schedule);
+			$schedule = Schedule::find($schedule);
 
 		if(is_string($schedule) || $schedule instanceof Carbon)
 			$schedule = Schedule::byStartAt($schedule)->first();
