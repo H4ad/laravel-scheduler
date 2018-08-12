@@ -8,6 +8,8 @@
  * @package H4ad\Scheduler
  */
 
+use H4ad\Scheduler\Models\Schedule;
+
 class Scheduler
 {
     /**
@@ -27,5 +29,22 @@ class Scheduler
     public function __construct($app)
     {
         $this->app = $app;
+    }
+
+    /**
+     * Escopo de uma consulta que busca horarios pela data de início.
+     *
+     * @param string|Carbon\Carbon $start_at
+     * @param string|Carbon\Carbon $end_at
+     * @return bool
+     */
+    public function hasScheduleBetween($start_at, $end_at)
+    {
+        return !is_null(
+            Schedule::latest()
+                ->where('start_at', '>=', $start_at)
+                ->where('end_at', '<=', $end_at)
+                ->first()
+        );
     }
 }
