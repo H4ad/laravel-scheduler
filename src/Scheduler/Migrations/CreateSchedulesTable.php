@@ -22,7 +22,7 @@ class CreateSchedulesTable extends Migration
      */
     public function up()
     {
-        Schema::create(Config::get('schedules_table'), function (Blueprint $table) {
+        Schema::create(Config::get('scheduler.schedules_table'), function (Blueprint $table) {
             $table->increments('id');
             $table->string('model_type');
             $table->integer('model_id');
@@ -41,6 +41,6 @@ class CreateSchedulesTable extends Migration
      */
     public function down()
     {
-        Schema::drop(Config::get('schedules_table'));
+        Schema::drop(Config::get('scheduler.schedules_table'));
     }
 }

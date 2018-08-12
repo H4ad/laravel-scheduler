@@ -22,7 +22,7 @@ class CreateScheduleStatusTable extends Migration
      */
     public function up()
     {
-        Schema::create(Config::get('schedule_status_table'), function (Blueprint $table) {
+        Schema::create(Config::get('scheduler.schedule_status_table'), function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
             $table->text('description')->nullable();
@@ -37,6 +37,6 @@ class CreateScheduleStatusTable extends Migration
      */
     public function down()
     {
-        Schema::drop(Config::get('schedule_status_table'));
+        Schema::drop(Config::get('scheduler.schedule_status_table'));
     }
 }
