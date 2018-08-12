@@ -54,7 +54,7 @@ interface SchedulerModelInterface
 	 * Caso a configuração "enable_schedule_conflict" estiver desabilitada, será lançado uma exceção
 	 * se for tentado remover um horário agendado pela data de quando foi marcado.
 	 *
-	 * @param  int|string $schedule    Horário agendado.
+	 * @param  int|string|Carbon\Carbon $schedule    Horário agendado.
 	 * @return bool|null
 	 *
 	 * @throws \H4ad\Scheduler\Exceptions\DoesNotBelong

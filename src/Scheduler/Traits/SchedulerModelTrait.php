@@ -33,7 +33,7 @@ trait SchedulerModelTrait
      */
 	public function schedules()
 	{
-		return $this->belongsTo(Config::get('scheduler.schedules_table'), 'model_id')->where('model_type', get_parent_class($this));
+		return $this->belongsTo(Config::get('scheduler.schedules_table'), 'model_id')->where('model_type', self::class);
 	}
 
 	/**
@@ -71,7 +71,7 @@ trait SchedulerModelTrait
 			throw new EndCantBeforeStart;
 
 		$model_id = $this->getKey();
-		$model_type = get_parent_class($this);
+		$model_type = self::class;
 
 		return Schedule::create(compact('start_at', 'end_at', 'status', 'model_id', 'model_type'));
 	}
@@ -90,7 +90,7 @@ trait SchedulerModelTrait
 	 */
 	public function removeSchedule($schedule)
 	{
-		if(Config::get('scheduler.enable_schedule_conflict') && !is_int($schedule))
+		if(!Config::get('scheduler.enable_schedule_conflict') && !is_int($schedule))
 			throw new CantRemoveByDate;
 
 		if(is_int($schedule))
@@ -102,7 +102,7 @@ trait SchedulerModelTrait
 		if(!($schedule instanceof Model))
 			throw (new ModelNotFound)->setValues(Schedule::class);
 
-		if($schedule->model_type != get_parent_class($this))
+		if($schedule->model_type != self::class)
 			throw new DoesNotBelong;
 
 		return $schedule->delete();
