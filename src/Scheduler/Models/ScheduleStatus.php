@@ -8,19 +8,13 @@
  * @package H4ad\Scheduler
  */
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ScheduleStatus extends Model
 {
     use SoftDeletes;
-
-    /**
-     * O nome da tabela que essa model representa.
-     *
-     * @var string
-     */
-    protected $table = Config::get('schedule_status_table');
 
 	/**
      * Os atributos que podem ser atribuíveis em massa.
@@ -39,4 +33,14 @@ class ScheduleStatus extends Model
     protected $dates = [
     	'deleted_at'
     ];
+
+    /**
+     * Construtor para inicilizar a váriavel table.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->table = Config::get('scheduler.schedule_status_table');
+    }
 }
