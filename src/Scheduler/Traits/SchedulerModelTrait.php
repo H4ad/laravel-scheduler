@@ -9,13 +9,16 @@
  */
 
 use Carbon\Carbon;
-use H4ad\Scheduler\Models\Schedule;
-use Illuminate\Support\Facades\Config;
-use H4ad\Scheduler\Exceptions\DoesNotBelong;
-use H4ad\Scheduler\Exceptions\CantRemoveByDate;
-use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
-use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
 use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
+use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
+use H4ad\Scheduler\Exceptions\CantRemoveByDate;
+use H4ad\Scheduler\Exceptions\DoesNotBelong;
+use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
+use H4ad\Scheduler\Exceptions\ModelNotFound;
+use H4ad\Scheduler\Facades\Scheduler;
+use H4ad\Scheduler\Models\Schedule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Implementação do contrato [SchedulerModelTrait].
@@ -51,9 +54,6 @@ trait SchedulerModelTrait
 		if(!Config::get('enable_schedule_without_end') && is_null($end_at))
 			throw new CantAddWithoutEnd;
 
-		if(Config::get('enable_schedule_conflict') && !is_null(Schedule::byStartAt($start_at)->first()))
-			throw new CantAddWithSameStartAt;
-
 		if(is_string($start_at))
 			$start_at = Carbon::parse($start_at);
 
@@ -63,7 +63,10 @@ trait SchedulerModelTrait
 		if(is_int($end_at))
 			$end_at = $start_at->addMinutes($end_at);
 
-		if($start_at->lessThan($end_at))
+		if(Config::get('scheduler.enable_schedule_conflict') && Scheduler::hasScheduleBetween($start_at, $end_at ?? $star_at))
+			throw new CantAddWithSameStartAt;
+
+		if($start_at->greaterThan($end_at))
 			throw new EndCantBeforeStart;
 
 		$model_id = $this->getKey();
@@ -82,6 +85,7 @@ trait SchedulerModelTrait
 	 *
 	 * @throws \H4ad\Scheduler\Exceptions\DoesNotBelong
 	 * @throws \H4ad\Scheduler\Exceptions\CantRemoveByDate
+	 * @throws \H4ad\Scheduler\Exceptions\ModelNotFound
 	 */
 	public function removeSchedule($schedule)
 	{
@@ -89,13 +93,13 @@ trait SchedulerModelTrait
 			throw new CantRemoveByDate;
 
 		if(is_int($schedule))
-			$schedule = Schedule::find($schedule);
+			$schedule = Schedule::findOrFail($schedule);
 
 		if(is_string($schedule) || $schedule instanceof Carbon)
 			$schedule = Schedule::byStartAt($schedule)->first();
 
-		if(is_null($schedule))
-			return;
+		if(!($schedule instanceof Model))
+			throw (new ModelNotFound)->setValues(Schedule::class);
 
 		if($schedule->model_type != get_parent_class($this))
 			throw new DoesNotBelong;

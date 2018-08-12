@@ -59,6 +59,7 @@ interface SchedulerModelInterface
 	 *
 	 * @throws \H4ad\Scheduler\Exceptions\DoesNotBelong
 	 * @throws \H4ad\Scheduler\Exceptions\CantRemoveByDate
+	 * @throws \H4ad\Scheduler\Exceptions\ModelNotFound
 	 */
 	public function removeSchedule($schedule);
 }

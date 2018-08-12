@@ -37,9 +37,9 @@ class ScheduleStatus extends Model
     /**
      * Construtor para inicilizar a váriavel table.
      */
-    public function __construct()
+    public function __construct(array $attributes = [])
     {
-        parent::__construct();
+        parent::__construct($attributes);
 
         $this->table = Config::get('scheduler.schedule_status_table');
     }
