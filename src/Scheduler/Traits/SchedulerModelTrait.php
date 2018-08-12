@@ -9,16 +9,16 @@
  */
 
 use Carbon\Carbon;
-use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
-use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
-use H4ad\Scheduler\Exceptions\CantRemoveByDate;
-use H4ad\Scheduler\Exceptions\DoesNotBelong;
-use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
-use H4ad\Scheduler\Exceptions\ModelNotFound;
-use H4ad\Scheduler\Facades\Scheduler;
 use H4ad\Scheduler\Models\Schedule;
-use Illuminate\Database\Eloquent\Model;
+use H4ad\Scheduler\Facades\Scheduler;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use H4ad\Scheduler\Exceptions\DoesNotBelong;
+use H4ad\Scheduler\Exceptions\ModelNotFound;
+use H4ad\Scheduler\Exceptions\CantRemoveByDate;
+use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
+use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
+use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
 
 /**
  * Implementação do contrato [SchedulerModelTrait].
@@ -33,7 +33,7 @@ trait SchedulerModelTrait
      */
 	public function schedules()
 	{
-		return $this->belongsTo(Config::get('schedules_table'), 'model_id')->where('model_type', get_parent_class($this));
+		return $this->belongsTo(Config::get('scheduler.schedules_table'), 'model_id')->where('model_type', get_parent_class($this));
 	}
 
 	/**
@@ -51,7 +51,7 @@ trait SchedulerModelTrait
 	 */
 	public function addSchedule($start_at, $end_at = null, $status = null)
 	{
-		if(!Config::get('enable_schedule_without_end') && is_null($end_at))
+		if(!Config::get('scheduler.enable_schedule_without_end') && is_null($end_at))
 			throw new CantAddWithoutEnd;
 
 		if(is_string($start_at))
@@ -63,10 +63,11 @@ trait SchedulerModelTrait
 		if(is_int($end_at))
 			$end_at = $start_at->addMinutes($end_at);
 
-		if(Config::get('scheduler.enable_schedule_conflict') && Scheduler::hasScheduleBetween($start_at, $end_at ?? $star_at))
-			throw new CantAddWithSameStartAt;
+		if(Config::get('scheduler.enable_schedule_conflict'))
+			if(Scheduler::hasScheduleBetween($start_at, $end_at ?? $start_at))
+				throw new CantAddWithSameStartAt;
 
-		if($start_at->greaterThan($end_at))
+		if($start_at->greaterThan($end_at) && !is_null($end_at))
 			throw new EndCantBeforeStart;
 
 		$model_id = $this->getKey();
@@ -89,7 +90,7 @@ trait SchedulerModelTrait
 	 */
 	public function removeSchedule($schedule)
 	{
-		if(Config::get('enable_schedule_conflict') && !is_int($schedule))
+		if(Config::get('scheduler.enable_schedule_conflict') && !is_int($schedule))
 			throw new CantRemoveByDate;
 
 		if(is_int($schedule))
