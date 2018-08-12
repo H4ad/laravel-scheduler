@@ -14,6 +14,7 @@ use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
 use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
 use H4ad\Scheduler\Models\ScheduleStatus;
 use H4ad\Scheduler\Tests\TestCase;
+use H4ad\Scheduler\Tests\Unit\SampleModel;
 use Illuminate\Support\Facades\Config;
 
 /**
@@ -30,8 +31,8 @@ class ScenarioOneTest extends TestCase
     {
     	parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('scheduler.enable_schedule_conflict', true);
-        $app['config']->set('scheduler.enable_schedule_without_end', false);
+        Config::set('scheduler.enable_schedule_conflict', true);
+        Config::set('scheduler.enable_schedule_without_end', false);
     }
 
     /**
@@ -125,5 +126,4 @@ class ScenarioOneTest extends TestCase
     	$this->expectException(EndCantBeforeStart::class);
     	$this->sampleModel->addSchedule(Carbon::now(), Carbon::now()->subMinutes(30));
     }
-
 }
