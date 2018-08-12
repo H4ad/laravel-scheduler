@@ -16,8 +16,13 @@
             "H4ad\\Scheduler\\": "src/Scheduler"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "H4ad\\Scheduler\\Tests\\": "tests/"
+        }
+    },
     "require-dev": {
-        "orchestra/testbench": "^3.6@dev",
-        "phpunit/phpunit": "^7.4@dev"
+        "orchestra/testbench": "~3.0",
+        "phpunit/phpunit": "^6.1"
     }
 }
