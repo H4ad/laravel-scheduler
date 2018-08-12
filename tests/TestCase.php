@@ -69,6 +69,11 @@ class TestCase extends OrchestralTestCase
         $schema->create('sample_models', function (Blueprint $table) {
             $table->increments('id');
         });
+
+        $schema->dropIfExists('sample_model_fake');
+        $schema->create('sample_model_fake', function (Blueprint $table) {
+            $table->increments('id');
+        });
     }
 
     /**
