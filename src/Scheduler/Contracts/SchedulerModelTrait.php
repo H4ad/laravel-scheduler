@@ -11,6 +11,24 @@
 interface SchedulerModelInterface
 {
 	/**
+     * Define an inverse one-to-one or many relationship.
+     *
+     * @param  string  $related
+     * @param  string  $foreignKey
+     * @param  string  $ownerKey
+     * @param  string  $relation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	abstract public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null);
+
+	/**
+     * Get the value of the model's primary key.
+     *
+     * @return mixed
+     */
+	abstract public function getKey();
+
+	/**
      * Retorna apenas os horários que possuem o mesmo [model_type] do [parent] dessa [trait].
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

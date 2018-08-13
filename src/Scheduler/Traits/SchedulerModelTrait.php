@@ -27,12 +27,20 @@ use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
 trait SchedulerModelTrait
 {
 	/**
-     * {@inheritDoc}
+     * Define an inverse one-to-one or many relationship.
+     *
+     * @param  string  $related
+     * @param  string  $foreignKey
+     * @param  string  $ownerKey
+     * @param  string  $relation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-	abstract public function belongsTo();
+	abstract public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null);
 
 	/**
-     * {@inheritDoc}
+     * Get the value of the model's primary key.
+     *
+     * @return mixed
      */
 	abstract public function getKey();
 
