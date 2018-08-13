@@ -8,8 +8,8 @@
  * @package H4ad\Scheduler
  */
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ScheduleStatus extends Model

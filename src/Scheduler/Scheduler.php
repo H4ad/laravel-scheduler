@@ -8,8 +8,8 @@
  * @package H4ad\Scheduler
  */
 
-use H4ad\Scheduler\Models\Schedule;
 use Illuminate\Support\Carbon;
+use H4ad\Scheduler\Models\Schedule;
 use Illuminate\Support\Facades\Config;
 
 class Scheduler

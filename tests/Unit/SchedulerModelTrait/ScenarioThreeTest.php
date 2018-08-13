@@ -9,10 +9,7 @@
  */
 
 use Illuminate\Support\Carbon;
-use H4ad\Scheduler\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
-use H4ad\Scheduler\Tests\Unit\SampleModel;
-use H4ad\Scheduler\Tests\Unit\ScenarioOneTest;
 
 /**
  * Configurações para os testes dessa classe:

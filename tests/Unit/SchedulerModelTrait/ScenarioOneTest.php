@@ -11,10 +11,8 @@
 use Carbon\Carbon;
 use H4ad\Scheduler\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
-use H4ad\Scheduler\Models\ScheduleStatus;
-use H4ad\Scheduler\Tests\Unit\SampleModel;
-use H4ad\Scheduler\Exceptions\ModelNotFound;
 use H4ad\Scheduler\Exceptions\DoesNotBelong;
+use H4ad\Scheduler\Exceptions\ModelNotFound;
 use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
 use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
 use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
