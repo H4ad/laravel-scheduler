@@ -35,9 +35,11 @@ interface SchedulerModelInterface
 	/**
 	 * Exibe uma lista dos horários do dia de hoje.
 	 *
-	 * @return [type] [description]
+	 * @param  int    $duration Serve para facilitar na hora de buscar horários livres
+	 *                          que precisem ter uma certa duração.
+	 * @return array
 	 */
-	public function availableToday();
+	public function availableToday($duration = 0);
 
 	/**
 	 * Lista os horários livres em um determinado dia.
@@ -45,9 +47,9 @@ interface SchedulerModelInterface
 	 * @param  string|Carbon\Carbon $date Data para o qual ele irá fazer a busca.
 	 * @param  int    $duration Serve para facilitar na hora de buscar horários livres
 	 *                          que precisem ter uma certa duração.
-	 * @return [type]       [description]
+	 * @return array
 	 */
-	public function availableOn($date, $duration = null);
+	public function availableOn($date, $duration = 0);
 
 	/**
 	 * Remove um horário agendado pelo seu ID ou pelo horário em que foi marcado.

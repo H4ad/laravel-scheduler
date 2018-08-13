@@ -61,7 +61,7 @@ trait SchedulerModelTrait
 			$end_at = Carbon::parse($end_at);
 
 		if(is_int($end_at))
-			$end_at = $start_at->addMinutes($end_at);
+			$end_at = Carbon::parse($start_at->toDateTimeString())->addMinutes($end_at);
 
 		if(Config::get('scheduler.enable_schedule_conflict'))
 			if(Scheduler::hasScheduleBetween($start_at, $end_at ?? $start_at))
