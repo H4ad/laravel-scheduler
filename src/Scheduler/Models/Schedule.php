@@ -52,14 +52,14 @@ class Schedule extends Model
     public function parseStatusKey($key)
     {
     	if(is_int($key))
-    		return ['id' => $key];
+    		return ['status' => $key];
 
     	$status = ScheduleStatus::where('name', $name)->first();
 
     	if(is_null($status))
     		throw (new ModelNotFoundException)->setModel(ScheduleStatus::class, $name);
 
-    	return ['id' => $status->id];
+    	return ['status' => $status->id];
     }
 
     /**
