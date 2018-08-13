@@ -15,7 +15,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Config;
 use Orchestra\Testbench\TestCase as OrchestralTestCase;
 
-class TestCase extends OrchestralTestCase
+abstract class TestCase extends OrchestralTestCase
 {
     /**
      * Model usada de exemplo para testar os métodos da Trait.
@@ -93,11 +93,7 @@ class TestCase extends OrchestralTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-        $app['config']->set('database.default', 'testbench');
-        $app['config']->set('database.connections.testbench', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-        ]);
+        date_default_timezone_set('America/Sao_Paulo');
     }
 
     /**
@@ -145,16 +141,5 @@ class TestCase extends OrchestralTestCase
         $status->name = $name ?? str_random(10);
         $status->save();
         return $status;
-    }
-
-    /**
-     * Método adicionado apenas para ele não ficar exibindo um Warning para este arquivo
-     * mesmo depois de ter configurado para não ler este arquivo.
-     *
-     * @return void
-     */
-    public function testDontCry()
-    {
-        $this->assertEquals(true, true);
     }
 }
