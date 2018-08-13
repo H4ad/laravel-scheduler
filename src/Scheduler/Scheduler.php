@@ -36,8 +36,8 @@ class Scheduler
     /**
      * Escopo de uma consulta que busca horarios pela data de início.
      *
-     * @param string|Carbon\Carbon $start_at
-     * @param string|Carbon\Carbon $end_at
+     * @param string|\Carbon\Carbon $start_at
+     * @param string|\Carbon\Carbon $end_at
      * @return bool
      */
     public function hasScheduleBetween($start_at, $end_at)
@@ -67,7 +67,7 @@ class Scheduler
      * Retorna os horários disponiveis em um determinado dia para uma certa model.
      *
      * @param  string  $model_type Tipo da model
-     * @param  string|Carbon\Carbon $date Data para o qual ele irá fazer a busca.
+     * @param  string|\Carbon\Carbon $date Data para o qual ele irá fazer a busca.
      * @param  int    $durationMinutes Serve para facilitar na hora de buscar horários livres
      *                          que precisem ter uma certa duração.
      * @return array
@@ -84,6 +84,9 @@ class Scheduler
             $add = true;
 
             foreach (Schedule::orderBy('start_at', 'DESC')->cursor() as $schedule) {
+            	if($schedule->model_type != $model_type)
+            		continue;
+
                 $start = Carbon::parse($schedule->start_at);
                 $begin = Carbon::parse($start->toDateString());
 

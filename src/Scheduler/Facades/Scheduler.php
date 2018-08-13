@@ -10,6 +10,13 @@
 
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * @method static bool hasScheduleBetween($start_at, $end_at)
+ * @method static array availableToday($model_type, $duration = 0)
+ * @method static array availableOn($model_type, $today, $durationMinutes)
+ *
+ * @see \H4ad\Scheduler\Scheduler
+ */
 class Scheduler extends Facade
 {
     /**

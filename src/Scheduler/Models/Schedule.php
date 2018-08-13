@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Database\Eloquent\Model;
+use H4ad\Scheduler\Exceptions\ModelNotFound;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Schedule extends Model
@@ -54,10 +55,10 @@ class Schedule extends Model
     	if(is_int($key))
     		return ['status' => $key];
 
-    	$status = ScheduleStatus::where('name', $name)->first();
+    	$status = ScheduleStatus::where('name', $key)->first();
 
     	if(is_null($status))
-    		throw (new ModelNotFoundException)->setModel(ScheduleStatus::class, $name);
+    		throw (new ModelNotFound)->setValues(ScheduleStatus::class);
 
     	return ['status' => $status->id];
     }

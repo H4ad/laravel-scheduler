@@ -41,7 +41,7 @@ class CustomException extends \Exception
     /**
      * Diz se o alias será no singular ou no plural.
      *
-     * @var array
+     * @var string
      */
     protected $aliastype = 'singular';
 
@@ -72,7 +72,7 @@ class CustomException extends \Exception
     /**
      * Render the exception as an HTTP response.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function render()
     {
@@ -84,7 +84,7 @@ class CustomException extends \Exception
     /**
      * Dá parse nos valores para a string de tradução.
      *
-     * @return array|string
+     * @return array
      */
     protected function parseValues()
     {

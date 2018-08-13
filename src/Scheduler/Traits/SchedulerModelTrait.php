@@ -27,6 +27,16 @@ use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
 trait SchedulerModelTrait
 {
 	/**
+     * {@inheritDoc}
+     */
+	abstract public function belongsTo();
+
+	/**
+     * {@inheritDoc}
+     */
+	abstract public function getKey();
+
+	/**
      * Retorna apenas os horários que possuem o mesmo [model_type] do [parent] dessa [trait].
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -39,8 +49,8 @@ trait SchedulerModelTrait
 	/**
 	 * Agenda um horário para esta model.
 	 *
-	 * @param string|Carbon\Carbon $start_at	Data em que será agendado, pode ser em string ou em numa classe Carbon.
-	 * @param string|Carbon\Carbon|int $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon
+	 * @param string|\Carbon\Carbon $start_at	Data em que será agendado, pode ser em string ou em numa classe Carbon.
+	 * @param string|\Carbon\Carbon|int $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon
 	 *                                           ou em int(sendo considerado os minutos de duração).
 	 * @param int $status	Status desse horário ao ser agendado.
 	 * @return \H4ad\Scheduler\Models\Schedule
@@ -81,7 +91,7 @@ trait SchedulerModelTrait
 	 * Caso a configuração "enable_schedule_conflict" estiver desabilitada, será lançado uma exceção
 	 * se for tentado remover um horário agendado pela data de quando foi marcado.
 	 *
-	 * @param  int|string|Carbon\Carbon $schedule    Horário agendado.
+	 * @param  int|string|\Carbon\Carbon $schedule    Horário agendado.
 	 * @return bool|null
 	 *
 	 * @throws \H4ad\Scheduler\Exceptions\DoesNotBelong

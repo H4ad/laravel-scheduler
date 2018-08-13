@@ -20,8 +20,8 @@ interface SchedulerModelInterface
 	/**
 	 * Agenda um horário para esta model.
 	 *
-	 * @param string|Carbon\Carbon $start_at	Data em que será agendado, pode ser em string ou em numa classe Carbon.
-	 * @param string|Carbon\Carbon|int $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon
+	 * @param string|\Carbon\Carbon $start_at	Data em que será agendado, pode ser em string ou em numa classe Carbon.
+	 * @param string|\Carbon\Carbon|int $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon
 	 *                                    ou em int(sendo considerado os minutos de duração).
 	 * @param int $status	Status desse horário ao ser agendado.
 	 * @return \H4ad\Scheduler\Models\Schedule
@@ -44,7 +44,7 @@ interface SchedulerModelInterface
 	/**
 	 * Lista os horários livres em um determinado dia.
 	 *
-	 * @param  string|Carbon\Carbon $date Data para o qual ele irá fazer a busca.
+	 * @param  string|\Carbon\Carbon $date Data para o qual ele irá fazer a busca.
 	 * @param  int    $duration Serve para facilitar na hora de buscar horários livres
 	 *                          que precisem ter uma certa duração.
 	 * @return array
@@ -56,7 +56,7 @@ interface SchedulerModelInterface
 	 * Caso a configuração "enable_schedule_conflict" estiver desabilitada, será lançado uma exceção
 	 * se for tentado remover um horário agendado pela data de quando foi marcado.
 	 *
-	 * @param  int|string|Carbon\Carbon $schedule    Horário agendado.
+	 * @param  int|string|\Carbon\Carbon $schedule    Horário agendado.
 	 * @return bool|null
 	 *
 	 * @throws \H4ad\Scheduler\Exceptions\DoesNotBelong
