@@ -9,6 +9,8 @@
  */
 
 use H4ad\Scheduler\Models\Schedule;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
 
 class Scheduler
 {
@@ -46,5 +48,66 @@ class Scheduler
                 ->where('end_at', '<=', $end_at)
                 ->first()
         );
+    }
+
+    /**
+     * Retorna os horários disponiveis hoje para uma determinada model.
+     * .
+     * @param  string  $model_type Tipo da model
+     * @param  int    $duration Serve para facilitar na hora de buscar horários livres
+     *                          que precisem ter uma certa duração.
+     * @return array
+     */
+    public function availableToday($model_type, $duration = 0)
+    {
+        return $this->availableOn($model_type, Carbon::now(), $duration);
+    }
+
+    /**
+     * Retorna os horários disponiveis em um determinado dia para uma certa model.
+     *
+     * @param  string  $model_type Tipo da model
+     * @param  string|Carbon\Carbon $date Data para o qual ele irá fazer a busca.
+     * @param  int    $durationMinutes Serve para facilitar na hora de buscar horários livres
+     *                          que precisem ter uma certa duração.
+     * @return array
+     */
+    public function availableOn($model_type, $today, $durationMinutes)
+    {
+        $openingTime = Carbon::parse(Config::get('scheduler.opening_time'))->setDateFrom($today);
+        $closingTime = Carbon::parse(Config::get('scheduler.closing_time'))->setDateFrom($today);
+
+        $livres = [];
+        $today = Carbon::parse($today->toDateString());
+        while($openingTime <= $closingTime)
+        {
+            $add = true;
+
+            foreach (Schedule::orderBy('start_at', 'DESC')->cursor() as $schedule) {
+                $start = Carbon::parse($schedule->start_at);
+                $begin = Carbon::parse($start->toDateString());
+
+                if($begin->greaterThan($today))
+                    break;
+
+                if($begin->notEqualTo($today))
+                    continue;
+
+                $end = Carbon::parse($schedule->end_at);
+                if($start <= Carbon::parse($openingTime->toDateTimeString())
+                && $end >= Carbon::parse($openingTime->toDateTimeString())->addMinutes($durationMinutes))
+                    $add = false;
+            }
+
+            if($add)
+                $livres[] = [
+                    'start_at' => Carbon::parse($openingTime->toDateTimeString()),
+                    'end_at' => Carbon::parse($openingTime->toDateTimeString())->addMinutes($durationMinutes)
+                ];
+
+            $openingTime->addMinutes($durationMinutes);
+        }
+
+        return $livres;
     }
 }

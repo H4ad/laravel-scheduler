@@ -11,6 +11,16 @@
 return [
 
 	/**
+	 * Horário de abertura que será usado de referencia para fazer as consultas de horários disponiveis.
+	 */
+	'opening_time' => '06:00:00',
+
+	/**
+	 * Horário de fechamento que será usado de referencia para fazer as consultas de horários disponiveis.
+	 */
+	'closing_time' => '20:00:00',
+
+	/**
 	 * Define o nome da tabela que será gerada para os horários agendados.
 	 */
 	'schedules_table' => 'schedules',
