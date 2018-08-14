@@ -83,10 +83,7 @@ class Scheduler
      */
     public function availableOn($model_type, $today, $durationMinutes, $openingTime = null)
     {
-        //TODO: Melhorar a performance desse método.
-        if(is_null($openingTime))
-            $openingTime = Carbon::parse(Config::get('scheduler.opening_time'))->setDateFrom($today);
-
+        $openingTime = $openingTime ?? Carbon::parse(Config::get('scheduler.opening_time'))->setDateFrom($today);
         $closingTime = Carbon::parse(Config::get('scheduler.closing_time'))->setDateFrom($today);
 
         $livres = [];
@@ -94,6 +91,9 @@ class Scheduler
         while($openingTime <= $closingTime)
         {
             $add = true;
+
+            $opening = Carbon::parse($openingTime->toDateTimeString());
+            $closing = Carbon::parse($openingTime->toDateTimeString())->addMinutes($durationMinutes);
 
             foreach (Schedule::orderBy('start_at', 'DESC')->cursor() as $schedule) {
             	if($schedule->model_type != $model_type)
@@ -109,21 +109,34 @@ class Scheduler
                     continue;
 
                 $end = Carbon::parse($schedule->end_at);
-                if($start <= Carbon::parse($openingTime->toDateTimeString())
-                && $end >= Carbon::parse($openingTime->toDateTimeString())->addMinutes($durationMinutes))
+
+                if($this->isShouldntAdd($opening, $closing, $start, $end))
                     $add = false;
             }
 
-            $endTime = Carbon::parse($openingTime->toDateTimeString())->addMinutes($durationMinutes);
-            if($add && $endTime->lessThanOrEqualTo($closingTime))
+            if($add && $closing->lessThanOrEqualTo($closingTime))
                 $livres[] = [
-                    'start_at' => Carbon::parse($openingTime->toDateTimeString()),
-                    'end_at' => $endTime
+                    'start_at' => $opening,
+                    'end_at' => $closing
                 ];
 
             $openingTime->addMinutes($durationMinutes);
         }
 
         return $livres;
+    }
+
+    /**
+     * Verifica se ele não deve ser adicionado ao array de horários livres.
+     *
+     * @param  \Carbon\Carbon  $opening
+     * @param  \Carbon\Carbon  $closing
+     * @param  \Carbon\Carbon  $start
+     * @param  \Carbon\Carbon  $end
+     * @return boolean
+     */
+    private function isShouldntAdd($opening, $closing, $start, $end)
+    {
+        return $start <= $opening && $end >= $closing;
     }
 }
