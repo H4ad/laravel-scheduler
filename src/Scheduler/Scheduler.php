@@ -61,13 +61,13 @@ class Scheduler
      * @param  string  $model_type Tipo da model
      * @param  int    $duration Serve para facilitar na hora de buscar horários livres
      *                          que precisem ter uma certa duração.
-     * @param \Carbon\Carbon|null $openingReference Serve como referencia para buscar horários livres.
+     * @param \Carbon\Carbon|null $openingTime Serve como referencia para buscar horários livres.
      *                                         Se for nulo, ele busca a referencia da config.
      * @return array
      */
-    public function availableToday($model_type, $duration, $openingReference = null)
+    public function availableToday($model_type, $duration, $openingTime = null)
     {
-        return $this->availableOn($model_type, Carbon::now(), $duration, $openingReference);
+        return $this->availableOn($model_type, Carbon::now(), $duration, $openingTime);
     }
 
     /**
@@ -77,14 +77,14 @@ class Scheduler
      * @param  \Carbon\Carbon $today Data para o qual ele irá fazer a busca.
      * @param  int    $durationMinutes Serve para facilitar na hora de buscar horários livres
      *                          que precisem ter uma certa duração.
-     * @param \Carbon\Carbon|null $openingReference Serve como referencia para buscar horários livres.
+     * @param \Carbon\Carbon|null $openingTime Serve como referencia para buscar horários livres.
      *                                         Se for nulo, ele busca a referencia da config.
      * @return array
      */
-    public function availableOn($model_type, $today, $durationMinutes, $openingReference = null)
+    public function availableOn($model_type, $today, $durationMinutes, $openingTime = null)
     {
         //TODO: Melhorar a performance desse método.
-        if(is_null($openingReference))
+        if(is_null($openingTime))
             $openingTime = Carbon::parse(Config::get('scheduler.opening_time'))->setDateFrom($today);
 
         $closingTime = Carbon::parse(Config::get('scheduler.closing_time'))->setDateFrom($today);

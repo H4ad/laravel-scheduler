@@ -55,11 +55,11 @@ interface SchedulerModelInterface
 	 *
 	 * @param  int    $duration Serve para facilitar na hora de buscar horários livres
 	 *                          que precisem ter uma certa duração.
-     * @param \Carbon\Carbon|null $openingReference Serve como referencia para buscar horários livres.
+     * @param \Carbon\Carbon|null $openingTime Serve como referencia para buscar horários livres.
      *                                         Se for nulo, ele busca a referencia da config.
 	 * @return array
 	 */
-	public function availableToday($duration = 0, $openingReference = null);
+	public function availableToday($duration = 0, $openingTime = null);
 
 	/**
 	 * Lista os horários livres em um determinado dia.
@@ -67,11 +67,11 @@ interface SchedulerModelInterface
 	 * @param  string|\Carbon\Carbon $date Data para o qual ele irá fazer a busca.
 	 * @param  int    $duration Serve para facilitar na hora de buscar horários livres
 	 *                          que precisem ter uma certa duração.
-     * @param \Carbon\Carbon|null $openingReference Serve como referencia para buscar horários livres.
+     * @param \Carbon\Carbon|null $openingTime Serve como referencia para buscar horários livres.
      *                                         Se for nulo, ele busca a referencia da config.
 	 * @return array
 	 */
-	public function availableOn($date, $duration = 0, $openingReference = null);
+	public function availableOn($date, $duration = 0, $openingTime = null);
 
 	/**
 	 * Faz um parse na data e retorna uma instância em Carbon.
