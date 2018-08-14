@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static bool hasScheduleBetween($start_at, $end_at)
- * @method static array availableToday($model_type, $duration = 0)
- * @method static array availableOn($model_type, $today, $durationMinutes)
+ * @method static array availableToday($model_type, $duration, $openingTime = null)
+ * @method static array availableOn($model_type, $today, $durationMinutes, $openingTime = null)
  *
  * @see \H4ad\Scheduler\Scheduler
  */
