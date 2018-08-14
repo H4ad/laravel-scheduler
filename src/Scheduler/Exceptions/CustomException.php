@@ -76,7 +76,9 @@ class CustomException extends \Exception
      */
     public function render()
     {
-        return response()->json([
+        return response()->
+            /** @scrutinizer ignore-call */
+            json([
             'messages' => trans('scheduler::exceptions.'. $this->trans, $this->parseValues())
         ], $this->statusCode);
     }
