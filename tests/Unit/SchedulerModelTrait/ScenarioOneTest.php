@@ -234,4 +234,20 @@ class ScenarioOneTest extends TestCase
         $this->assertEquals($schedule->id, $this->sampleModel->parseToSchedule(Carbon::parse($schedule->start_at))->id);
         $this->assertEquals(null, $this->sampleModel->parseToSchedule('2012-12-12'));
     }
+
+    /**
+     * Testa o método que retorna os horaŕios disponiveis hoje.
+     *
+     * @return void
+     */
+    public function testAvailableToday()
+    {
+        $schedule = $this->getSchedule(12, 45);
+        $contain = [
+            'start_at' => Carbon::parse($schedule->start_at),
+            'end_at' => Carbon::parse($schedule->end_at)
+        ];
+
+        $this->assertNotContains($this->sampleModel->availableToday(45, Carbon::today()->addHour(12)), $contain);
+    }
 }

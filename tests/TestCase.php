@@ -8,6 +8,7 @@
  * @package H4ad\Scheduler
  */
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 use H4ad\Scheduler\Models\ScheduleStatus;
 use Illuminate\Database\Schema\Blueprint;
@@ -141,5 +142,17 @@ abstract class TestCase extends OrchestralTestCase
         $status->name = $name ?? str_random(10);
         $status->save();
         return $status;
+    }
+
+    /**
+     * Retorna um horário cadastrado hoje em determinada hora e minuto.
+     *
+     * @param  int $hour
+     * @param  int $minute
+     * @return \H4ad\Scheduler\Models\Schedule
+     */
+    protected function getSchedule($hour, $minute)
+    {
+        return $this->sampleModel->addSchedule(Carbon::today()->addHour($hour), Carbon::today()->addHour($hour)->addMinutes($minute));
     }
 }
