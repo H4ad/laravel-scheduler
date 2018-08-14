@@ -96,11 +96,13 @@ trait SchedulerModelTrait
 	 *
 	 * @param  int    $duration Serve para facilitar na hora de buscar horários livres
 	 *                          que precisem ter uma certa duração.
+     * @param \Carbon\Carbon|null $openingReference Serve como referencia para buscar horários livres.
+     *                                         Se for nulo, ele busca a referencia da config.
 	 * @return array
 	 */
-	public function availableToday($duration = 0)
+	public function availableToday($duration = 0, $openingReference = null)
 	{
-		return Scheduler::availableToday(self::class, $duration);
+		return Scheduler::availableToday(self::class, $duration, $openingReference);
 	}
 
 	/**
@@ -109,11 +111,13 @@ trait SchedulerModelTrait
 	 * @param  string|\Carbon\Carbon $date Data para o qual ele irá fazer a busca.
 	 * @param  int    $duration Serve para facilitar na hora de buscar horários livres
 	 *                          que precisem ter uma certa duração.
+     * @param \Carbon\Carbon|null $openingReference Serve como referencia para buscar horários livres.
+     *                                         Se for nulo, ele busca a referencia da config.
 	 * @return array
 	 */
-	public function availableOn($date, $duration = 0)
+	public function availableOn($date, $duration = 0, $openingReference = null)
 	{
-		return Scheduler::availableOn(self::class, $date, $duration);
+		return Scheduler::availableOn(self::class, $date, $duration, $openingReference);
 	}
 
 	/**

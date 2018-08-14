@@ -61,11 +61,13 @@ class Scheduler
      * @param  string  $model_type Tipo da model
      * @param  int    $duration Serve para facilitar na hora de buscar horários livres
      *                          que precisem ter uma certa duração.
+     * @param \Carbon\Carbon|null $openingReference Serve como referencia para buscar horários livres.
+     *                                         Se for nulo, ele busca a referencia da config.
      * @return array
      */
-    public function availableToday($model_type, $duration)
+    public function availableToday($model_type, $duration, $openingReference = null)
     {
-        return $this->availableOn($model_type, Carbon::now(), $duration);
+        return $this->availableOn($model_type, Carbon::now(), $duration, $openingReference);
     }
 
     /**
@@ -75,11 +77,16 @@ class Scheduler
      * @param  \Carbon\Carbon $today Data para o qual ele irá fazer a busca.
      * @param  int    $durationMinutes Serve para facilitar na hora de buscar horários livres
      *                          que precisem ter uma certa duração.
+     * @param \Carbon\Carbon|null $openingReference Serve como referencia para buscar horários livres.
+     *                                         Se for nulo, ele busca a referencia da config.
      * @return array
      */
-    public function availableOn($model_type, $today, $durationMinutes)
+    public function availableOn($model_type, $today, $durationMinutes, $openingReference = null)
     {
-        $openingTime = Carbon::parse(Config::get('scheduler.opening_time'))->setDateFrom($today);
+        //TODO: Melhorar a performance desse método.
+        if(is_null($openingReference))
+            $openingTime = Carbon::parse(Config::get('scheduler.opening_time'))->setDateFrom($today);
+
         $closingTime = Carbon::parse(Config::get('scheduler.closing_time'))->setDateFrom($today);
 
         $livres = [];
@@ -107,10 +114,11 @@ class Scheduler
                     $add = false;
             }
 
-            if($add)
+            $endTime = Carbon::parse($openingTime->toDateTimeString())->addMinutes($durationMinutes);
+            if($add && $endTime->lessThanOrEqualTo($closingTime))
                 $livres[] = [
                     'start_at' => Carbon::parse($openingTime->toDateTimeString()),
-                    'end_at' => Carbon::parse($openingTime->toDateTimeString())->addMinutes($durationMinutes)
+                    'end_at' => $endTime
                 ];
 
             $openingTime->addMinutes($durationMinutes);
