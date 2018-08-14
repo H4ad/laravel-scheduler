@@ -12,6 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 use H4ad\Scheduler\Exceptions\ModelNotFound;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string $model_type
+ * @property int $model_id
+ * @property int $status
+ */
 class Schedule extends Model
 {
     use SoftDeletes;

@@ -17,6 +17,7 @@ use H4ad\Scheduler\Exceptions\DoesNotBelong;
 use H4ad\Scheduler\Exceptions\ModelNotFound;
 use H4ad\Scheduler\Exceptions\CantRemoveByDate;
 use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
+use H4ad\Scheduler\Exceptions\IntInvalidArgument;
 use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
 use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
 
@@ -99,13 +100,16 @@ trait SchedulerModelTrait
 	 */
 	public function parseToCarbon($date, $reference = null)
 	{
+		if($date instanceof Carbon)
+			return $date;
+
 		if(is_string($date))
 			return Carbon::parse($date);
 
 		if(is_int($date) && !is_null($reference))
 			return Carbon::parse($reference->toDateTimeString())->addMinutes($date);
 
-		return $date;
+		throw new IntInvalidArgument;
 	}
 
 	/**
