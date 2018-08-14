@@ -40,10 +40,14 @@ class Scheduler
      * @param string|\Carbon\Carbon $end_at
      * @return bool
      */
-    public function hasScheduleBetween($start_at, $end_at)
+    public function hasScheduleBetween($model_type, $start_at, $end_at)
     {
+        if(!Config::get('scheduler.enable_schedule_conflict'))
+            return false;
+
         return !is_null(
             Schedule::latest()
+                ->where('model_type', $model_type)
                 ->where('start_at', '>=', $start_at)
                 ->where('end_at', '<=', $end_at)
                 ->first()
@@ -58,7 +62,7 @@ class Scheduler
      *                          que precisem ter uma certa duração.
      * @return array
      */
-    public function availableToday($model_type, $duration = 0)
+    public function availableToday($model_type, $duration)
     {
         return $this->availableOn($model_type, Carbon::now(), $duration);
     }
@@ -67,7 +71,7 @@ class Scheduler
      * Retorna os horários disponiveis em um determinado dia para uma certa model.
      *
      * @param  string  $model_type Tipo da model
-     * @param  string|\Carbon\Carbon $date Data para o qual ele irá fazer a busca.
+     * @param  string|\Carbon\Carbon $today Data para o qual ele irá fazer a busca.
      * @param  int    $durationMinutes Serve para facilitar na hora de buscar horários livres
      *                          que precisem ter uma certa duração.
      * @return array

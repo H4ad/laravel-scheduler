@@ -51,7 +51,7 @@ trait SchedulerModelTrait
      */
 	public function schedules()
 	{
-		return $this->belongsTo(Config::get('scheduler.schedules_table'), 'model_id')->where('model_type', self::class);
+		return $this->belongsTo(Config::get('scheduler.schedules_table'), 'model_id');
 	}
 
 	/**
@@ -72,18 +72,11 @@ trait SchedulerModelTrait
 		if(!Config::get('scheduler.enable_schedule_without_end') && is_null($end_at))
 			throw new CantAddWithoutEnd;
 
-		if(is_string($start_at))
-			$start_at = Carbon::parse($start_at);
+		$start_at  = $this->parseToCarbon($start_at);
+		$end_at = $this->parseToCarbon($end_at, $start_at);
 
-		if(is_string($end_at))
-			$end_at = Carbon::parse($end_at);
-
-		if(is_int($end_at))
-			$end_at = Carbon::parse($start_at->toDateTimeString())->addMinutes($end_at);
-
-		if(Config::get('scheduler.enable_schedule_conflict'))
-			if(Scheduler::hasScheduleBetween($start_at, $end_at ?? $start_at))
-				throw new CantAddWithSameStartAt;
+		if(Scheduler::hasScheduleBetween(self::class, $start_at, $end_at ?? $start_at))
+			throw new CantAddWithSameStartAt;
 
 		if($start_at->greaterThan($end_at) && !is_null($end_at))
 			throw new EndCantBeforeStart;
@@ -92,6 +85,41 @@ trait SchedulerModelTrait
 		$model_type = self::class;
 
 		return Schedule::create(compact('start_at', 'end_at', 'status', 'model_id', 'model_type'));
+	}
+
+	/**
+	 * Faz um parse na data e retorna uma instância em Carbon.
+	 *
+	 * @param  string|int $date Data final que será transformada numa instancia Carbon.
+	 * @param  \Carbon\Carbon $reference Data de referencia quando o [date] é inteiro.
+	 * @return \Carbon\Carbon
+	 */
+	public function parseToCarbon($date, $reference = null)
+	{
+		if(is_string($date))
+			return Carbon::parse($date);
+
+		if(is_int($date))
+			return Carbon::parse($reference->toDateTimeString())->addMinutes($date);
+
+		return $date;
+	}
+
+	/**
+	 * Faz um parse e retorna um Schedule.
+	 *
+	 * @param  \Carbon\Carbon|string|int $value Valor que representará a data ou o id a ser buscado.
+	 * @return H4ad\Scheduler\Models\Schedule|null
+	 */
+	public function parseToSchedule($value)
+	{
+		if(is_int($value))
+			return Schedule::find($value);
+
+		if(is_string($value) || $value instanceof Carbon)
+			return Schedule::byStartAt($value)->first();
+
+		return null;
 	}
 
 	/**
@@ -111,16 +139,12 @@ trait SchedulerModelTrait
 		if(!Config::get('scheduler.enable_schedule_conflict') && !is_int($schedule))
 			throw new CantRemoveByDate;
 
-		if(is_int($schedule))
-			$schedule = Schedule::find($schedule);
-
-		if(is_string($schedule) || $schedule instanceof Carbon)
-			$schedule = Schedule::byStartAt($schedule)->first();
+		$schedule = $this->parseToSchedule($schedule);
 
 		if(!($schedule instanceof Model))
 			throw (new ModelNotFound)->setValues(Schedule::class);
 
-		if($schedule->model_type != self::class)
+		if($schedule->model_type != self::class || $schedule->model_id != $this->getKey())
 			throw new DoesNotBelong;
 
 		return $schedule->delete();
