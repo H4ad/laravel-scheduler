@@ -67,7 +67,7 @@ class Schedule extends Model
      * Escopo de uma consulta que busca horarios pela data de início.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed $start_at
+     * @param \Carbon\Carbon|string $start_at
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeByStartAt($query, $start_at)
