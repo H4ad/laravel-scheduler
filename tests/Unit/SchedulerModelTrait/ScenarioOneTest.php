@@ -11,6 +11,7 @@
 use Carbon\Carbon;
 use H4ad\Scheduler\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
+use H4ad\Scheduler\Tests\Unit\SampleModel;
 use H4ad\Scheduler\Exceptions\DoesNotBelong;
 use H4ad\Scheduler\Exceptions\ModelNotFound;
 use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
@@ -176,6 +177,20 @@ class ScenarioOneTest extends TestCase
 
         $this->expectException(DoesNotBelong::class);
         $this->sampleModel->removeSchedule($scheduleFake->id);
+    }
+
+    /**
+     * Testa a remoção de um horário registrado pelo mesmo [model_type] mas com um [id] diferente.
+     *
+     * @return void
+     */
+    public function testRemoveScheduleOfSameModelTypeAndDifferentId()
+    {
+        $schedule = $this->sampleModel->addSchedule(Carbon::now(), Carbon::now()->addMinutes(30));
+        $sampleModelTwo = SampleModel::create();
+
+        $this->expectException(DoesNotBelong::class);
+        $sampleModelTwo->removeSchedule($schedule->id);
     }
 
     /**
