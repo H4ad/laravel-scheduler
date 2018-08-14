@@ -97,6 +97,8 @@ trait SchedulerModelTrait
 	 * @param  \Carbon\Carbon|string|int $date Data final que será transformada numa instancia Carbon.
 	 * @param  \Carbon\Carbon $reference Data de referencia quando o [date] é inteiro.
 	 * @return \Carbon\Carbon
+	 *
+	 * @throws \H4ad\Scheduler\Exceptions\IntInvalidArgument
 	 */
 	public function parseToCarbon($date, $reference = null)
 	{
