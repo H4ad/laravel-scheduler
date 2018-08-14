@@ -92,6 +92,31 @@ trait SchedulerModelTrait
 	}
 
 	/**
+	 * Exibe uma lista dos horários do dia de hoje.
+	 *
+	 * @param  int    $duration Serve para facilitar na hora de buscar horários livres
+	 *                          que precisem ter uma certa duração.
+	 * @return array
+	 */
+	public function availableToday($duration = 0)
+	{
+		return Scheduler::availableToday(self::class, $duration);
+	}
+
+	/**
+	 * Lista os horários livres em um determinado dia.
+	 *
+	 * @param  string|\Carbon\Carbon $date Data para o qual ele irá fazer a busca.
+	 * @param  int    $duration Serve para facilitar na hora de buscar horários livres
+	 *                          que precisem ter uma certa duração.
+	 * @return array
+	 */
+	public function availableOn($date, $duration = 0)
+	{
+		return Scheduler::availableOn(self::class, $date, $duration);
+	}
+
+	/**
 	 * Faz um parse na data e retorna uma instância em Carbon.
 	 *
 	 * @param  \Carbon\Carbon|string|int $date Data final que será transformada numa instancia Carbon.

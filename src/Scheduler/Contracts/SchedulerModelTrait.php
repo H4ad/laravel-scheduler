@@ -70,6 +70,25 @@ interface SchedulerModelInterface
 	public function availableOn($date, $duration = 0);
 
 	/**
+	 * Faz um parse na data e retorna uma instância em Carbon.
+	 *
+	 * @param  \Carbon\Carbon|string|int $date Data final que será transformada numa instancia Carbon.
+	 * @param  \Carbon\Carbon $reference Data de referencia quando o [date] é inteiro.
+	 * @return \Carbon\Carbon
+	 *
+	 * @throws \H4ad\Scheduler\Exceptions\IntInvalidArgument
+	 */
+	public function parseToCarbon($date, $reference = null);
+
+	/**
+	 * Faz um parse e retorna um Schedule.
+	 *
+	 * @param  \Carbon\Carbon|string|int $value Valor que representará a data ou o id a ser buscado.
+	 * @return \H4ad\Scheduler\Models\Schedule|null
+	 */
+	public function parseToSchedule($value);
+
+	/**
 	 * Remove um horário agendado pelo seu ID ou pelo horário em que foi marcado.
 	 * Caso a configuração "enable_schedule_conflict" estiver desabilitada, será lançado uma exceção
 	 * se for tentado remover um horário agendado pela data de quando foi marcado.
