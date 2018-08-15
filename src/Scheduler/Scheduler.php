@@ -95,10 +95,7 @@ class Scheduler
             $opening = Carbon::parse($openingTime->toDateTimeString());
             $closing = Carbon::parse($openingTime->toDateTimeString())->addMinutes($durationMinutes);
 
-            foreach (Schedule::orderBy('start_at', 'DESC')->cursor() as $schedule) {
-            	if($schedule->model_type != $model_type)
-            		continue;
-
+            foreach (Schedule::where('model_type', $model_type)->orderBy('start_at', 'DESC')->cursor() as $schedule) {
                 $start = Carbon::parse($schedule->start_at);
                 $begin = Carbon::parse($start->toDateString());
 

@@ -52,15 +52,18 @@ class Schedule extends Model
     /**
      * Retorna o ID do status caso passem o nome do status.
      *
-     * @param  int|string $key ID ou o nome do status.
+     * @param  int|string $status ID ou o nome do status.
      * @return array
+     *
+     * @throws \H4ad\Scheduler\Exceptions\ModelNotFound
      */
-    public function parseStatusKey($key)
+    public function parseStatusKey($status)
     {
-    	if(is_int($key))
-    		return ['status' => $key];
+    	if(is_int($status))
+    		$status =  ScheduleStatus::find($status);
 
-    	$status = ScheduleStatus::where('name', $key)->first();
+        if(is_string($status))
+        	$status = ScheduleStatus::where('name', $status)->first();
 
     	if(is_null($status))
     		throw (new ModelNotFound)->setValues(ScheduleStatus::class);
