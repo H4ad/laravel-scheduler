@@ -1,4 +1,4 @@
-<?php namespace H4ad\Scheduler\Migrations;
+<?php
 
 /**
  * Esse arquivo faz parte do Scheduler,
