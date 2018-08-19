@@ -42,10 +42,6 @@ interface SchedulerModelInterface
 	 *                                    ou em int(sendo considerado os minutos de duração).
 	 * @param int $status	Status desse horário ao ser agendado.
 	 * @return \H4ad\Scheduler\Models\Schedule
-	 *
-	 * @throws \H4ad\Scheduler\Exceptions\CantAddWithoutEnd
-	 * @throws \H4ad\Scheduler\Exceptions\CantAddWithSameStartAt
-	 * @throws \H4ad\Scheduler\Exceptions\EndCantBeforeStart
 	 */
 	public function addSchedule($start_at, $end_at = null, $status = null);
 
@@ -71,17 +67,6 @@ interface SchedulerModelInterface
 	 * @return array
 	 */
 	public function availableOn($date, $duration = 0, $openingTime = null);
-
-	/**
-	 * Faz um parse na data e retorna uma instância em Carbon.
-	 *
-	 * @param  \Carbon\Carbon|string|int $date Data final que será transformada numa instancia Carbon.
-	 * @param  \Carbon\Carbon $reference Data de referencia quando o [date] é inteiro.
-	 * @return \Carbon\Carbon
-	 *
-	 * @throws \H4ad\Scheduler\Exceptions\IntInvalidArgument
-	 */
-	public function parseToCarbon($date, $reference = null);
 
 	/**
 	 * Faz um parse e retorna um Schedule.

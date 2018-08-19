@@ -16,10 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 use H4ad\Scheduler\Exceptions\DoesNotBelong;
 use H4ad\Scheduler\Exceptions\ModelNotFound;
 use H4ad\Scheduler\Exceptions\CantRemoveByDate;
-use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
-use H4ad\Scheduler\Exceptions\IntInvalidArgument;
-use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
-use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
 
 /**
  * Implementação do contrato [SchedulerModelTrait].
@@ -62,32 +58,13 @@ trait SchedulerModelTrait
 	 *                                                  ou em int(sendo considerado os minutos de duração).
 	 * @param  int|null $status	Status desse horário ao ser agendado.
 	 * @return \H4ad\Scheduler\Models\Schedule
-	 *
-	 * @throws \H4ad\Scheduler\Exceptions\CantAddWithoutEnd
-	 * @throws \H4ad\Scheduler\Exceptions\EndCantBeforeStart
-	 * @throws \H4ad\Scheduler\Exceptions\CantAddWithSameStartAt
 	 */
 	public function addSchedule($start_at, $end_at = null, $status = null)
 	{
-		if(!Config::get('scheduler.enable_schedule_without_end') && is_null($end_at))
-			throw new CantAddWithoutEnd;
+		$data = Scheduler::validateSchedule(self::class, $start_at, $end_at, $status);
+		$data['model_id'] = $this->getKey();
 
-		$start_at  = $this->parseToCarbon($start_at);
-
-		if(!is_null($end_at)) {
-			$end_at = $this->parseToCarbon($end_at, $start_at);
-
-			if($start_at->greaterThan($end_at))
-				throw new EndCantBeforeStart;
-		}
-
-		if(Scheduler::hasScheduleBetween(self::class, $start_at, $end_at ?? $start_at))
-			throw new CantAddWithSameStartAt;
-
-		$model_id = $this->getKey();
-		$model_type = self::class;
-
-		return Schedule::create(compact('start_at', 'end_at', 'status', 'model_id', 'model_type'));
+		return Schedule::create($data);
 	}
 
 	/**
@@ -120,43 +97,6 @@ trait SchedulerModelTrait
 	}
 
 	/**
-	 * Faz um parse na data e retorna uma instância em Carbon.
-	 *
-	 * @param  \Carbon\Carbon|string|int $date Data final que será transformada numa instancia Carbon.
-	 * @param  \Carbon\Carbon $reference Data de referencia quando o [date] é inteiro.
-	 * @return \Carbon\Carbon
-	 *
-	 * @throws \H4ad\Scheduler\Exceptions\IntInvalidArgument
-	 */
-	public function parseToCarbon($date, $reference = null)
-	{
-		if($date instanceof Carbon)
-			return $date;
-
-		if(is_string($date))
-			return Carbon::parse($date);
-
-		if(is_int($date) && !is_null($reference))
-			return Carbon::parse($reference->toDateTimeString())->addMinutes($date);
-
-		throw new IntInvalidArgument;
-	}
-
-	/**
-	 * Faz um parse e retorna um Schedule.
-	 *
-	 * @param  \Carbon\Carbon|string|int $value Valor que representará a data ou o id a ser buscado.
-	 * @return \H4ad\Scheduler\Models\Schedule|null
-	 */
-	public function parseToSchedule($value)
-	{
-		if(is_int($value))
-			return Schedule::find($value);
-
-		return Schedule::byStartAt($value)->first();
-	}
-
-	/**
 	 * Remove um horário agendado pelo seu ID ou pelo horário em que foi marcado.
 	 * Caso a configuração "enable_schedule_conflict" estiver desabilitada, será lançado uma exceção
 	 * se for tentado remover um horário agendado pela data de quando foi marcado.
@@ -173,7 +113,7 @@ trait SchedulerModelTrait
 		if(!Config::get('scheduler.enable_schedule_conflict') && !is_int($schedule))
 			throw new CantRemoveByDate;
 
-		$schedule = $this->parseToSchedule($schedule);
+		$schedule = Scheduler::parseToSchedule($schedule);
 
 		if(!($schedule instanceof Model))
 			throw (new ModelNotFound)->setValues(Schedule::class);
