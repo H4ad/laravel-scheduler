@@ -29,6 +29,7 @@ class CreateSchedulesTable extends Migration
             $table->timestamp('start_at');
             $table->timestamp('end_at')->nullable();
             $table->integer('status')->nullable();
+            $table->json('data')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

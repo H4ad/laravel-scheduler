@@ -21,13 +21,22 @@ class Schedule extends Model
 {
     use SoftDeletes;
 
+    /**
+     * Os atributos que devem ser mutados para os tipos nátivos.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'data' => 'array',
+    ];
+
 	/**
      * Os atributos que podem ser atribuíveis em massa.
      *
      * @var array
      */
     protected $fillable = [
-    	'model_type', 'model_id', 'start_at', 'end_at', 'status'
+    	'model_type', 'model_id', 'start_at', 'end_at', 'status', 'data'
     ];
 
     /**

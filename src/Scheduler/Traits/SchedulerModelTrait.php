@@ -57,14 +57,17 @@ trait SchedulerModelTrait
 	 * @param  \Carbon\Carbon|string|int|null $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon
 	 *                                                  ou em int(sendo considerado os minutos de duração).
 	 * @param  int|null $status	Status desse horário ao ser agendado.
+	 * @param  array|null $data Informações opcionais que podem ser anexadas ao horário cadastrado.
 	 * @return \H4ad\Scheduler\Models\Schedule
 	 */
-	public function addSchedule($start_at, $end_at = null, $status = null)
+	public function addSchedule($start_at, $end_at = null, $status = null, $data = null)
 	{
-		$data = Scheduler::validateSchedule(self::class, $start_at, $end_at, $status);
-		$data['model_id'] = $this->getKey();
+		$schedule = Scheduler::validateSchedule(self::class, $start_at, $end_at, $status);
 
-		return Schedule::create($data);
+		$schedule['model_id'] = $this->getKey();
+		$schedule['data'] = $data;
+
+		return Schedule::create($schedule);
 	}
 
 	/**
