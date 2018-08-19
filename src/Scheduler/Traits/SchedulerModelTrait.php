@@ -28,14 +28,14 @@ use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
 trait SchedulerModelTrait
 {
 	/**
-     * Define a one-to-many relationship.
+     * Define a one-to-one relationship.
      *
      * @param  string  $related
      * @param  string  $foreignKey
      * @param  string  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    abstract public function hasMany($related, $foreignKey = null, $localKey = null);
+    abstract public function hasOne($related, $foreignKey = null, $localKey = null);
 
 	/**
      * Get the value of the model's primary key.
@@ -45,13 +45,13 @@ trait SchedulerModelTrait
 	abstract public function getKey();
 
 	/**
-     * Retorna apenas os horários que possuem o mesmo [model_type] do [parent] dessa [trait].
+     * Retorna apenas o horário que possui o mesmo [model_id] do [parent] dessa [trait].
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
 	public function schedules()
 	{
-		return $this->hasMany(Config::get('scheduler.schedules_table'), 'model_id');
+		return $this->hasOne(Config::get('scheduler.schedules_table'), 'model_id');
 	}
 
 	/**

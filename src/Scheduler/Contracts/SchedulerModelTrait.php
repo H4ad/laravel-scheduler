@@ -11,14 +11,14 @@
 interface SchedulerModelInterface
 {
 	/**
-     * Define a one-to-many relationship.
+     * Define a one-to-one relationship.
      *
      * @param  string  $related
      * @param  string  $foreignKey
      * @param  string  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    abstract public function hasMany($related, $foreignKey = null, $localKey = null);
+    abstract public function hasOne($related, $foreignKey = null, $localKey = null);
 
 	/**
      * Get the value of the model's primary key.
