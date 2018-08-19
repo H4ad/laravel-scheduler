@@ -41,9 +41,10 @@ interface SchedulerModelInterface
 	 * @param string|\Carbon\Carbon|int $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon
 	 *                                    ou em int(sendo considerado os minutos de duração).
 	 * @param int $status	Status desse horário ao ser agendado.
+	 * @param  array|null $data Informações opcionais que podem ser anexadas ao horário cadastrado.
 	 * @return \H4ad\Scheduler\Models\Schedule
 	 */
-	public function addSchedule($start_at, $end_at = null, $status = null);
+	public function addSchedule($start_at, $end_at = null, $status = null, $data = null);
 
 	/**
 	 * Exibe uma lista dos horários do dia de hoje.
