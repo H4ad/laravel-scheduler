@@ -16,7 +16,6 @@ use H4ad\Scheduler\Exceptions\DoesNotBelong;
 use H4ad\Scheduler\Exceptions\ModelNotFound;
 use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
 use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
-use H4ad\Scheduler\Exceptions\IntInvalidArgument;
 use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
 
 /**
@@ -203,36 +202,6 @@ class ScenarioOneTest extends TestCase
     {
         $this->expectException(ModelNotFound::class);
         $this->sampleModel->removeSchedule(0);
-    }
-
-    /**
-     * Testa o método de transformar para uma instancia em carbon.
-     *
-     * @return void
-     */
-    public function testParseToCarbon()
-    {
-        $this->assertEquals(true, $this->sampleModel->parseToCarbon(Carbon::today()) instanceof Carbon);
-        $this->assertEquals(Carbon::parse('2018-07-11'), $this->sampleModel->parseToCarbon('2018-07-11'));
-        $this->assertEquals(Carbon::today()->addMinutes(45), $this->sampleModel->parseToCarbon(45, Carbon::today()));
-
-        $this->expectException(IntInvalidArgument::class);
-        $this->sampleModel->parseToCarbon(45);
-    }
-
-    /**
-     * Testa o método de transformar para uma instancia do Schedule.
-     *
-     * @return void
-     */
-    public function testParseToSchedule()
-    {
-        $schedule = $this->sampleModel->addSchedule(Carbon::today(), Carbon::today()->addMinutes(45));
-
-        $this->assertEquals($schedule->id, $this->sampleModel->parseToSchedule($schedule->id)->id);
-        $this->assertEquals($schedule->id, $this->sampleModel->parseToSchedule($schedule->start_at)->id);
-        $this->assertEquals($schedule->id, $this->sampleModel->parseToSchedule(Carbon::parse($schedule->start_at))->id);
-        $this->assertEquals(null, $this->sampleModel->parseToSchedule('2012-12-12'));
     }
 
     /**
