@@ -42,7 +42,7 @@ class SchedulerServiceProvider extends ServiceProvider
     {
         $this->app->alias(Scheduler::class, 'scheduler');
 
-        $this->app->singleton('scheduler', function ($app) {
+        $this->app->singleton('scheduler', function () {
             return new Scheduler;
         });
 

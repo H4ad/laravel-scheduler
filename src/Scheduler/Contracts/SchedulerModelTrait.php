@@ -8,6 +8,8 @@
  * @package H4ad\Scheduler
  */
 
+use Carbon\Carbon;
+
 interface SchedulerModelInterface
 {
 	/**

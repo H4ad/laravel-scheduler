@@ -26,7 +26,7 @@ class Scheduler
     /**
      * Query a ser executada.
      *
-     * @var void
+     * @var \Illuminate\Database\Eloquent\Builder
      */
     protected $query;
 
