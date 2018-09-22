@@ -11,12 +11,18 @@
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static bool hasScheduleBetween($model_type, $start_at, $end_at)
- * @method static array availableToday($model_type, $duration, $openingTime = null)
- * @method static array availableOn($model_type, $today, $durationMinutes, $openingTime = null)
- * @method static array validateSchedule($model_type, $start_at, $end_at = null, $status = null)
+ * @method static void init(Closure $boot)
+ * @method static $this avoid(array $model_ids)
+ * @method static boolean hasConflict($start_at, $end_at)
+ * @method static $this whereBetween($start_at, $end_at)
+ * @method static $this byModel(string $model_type = null)
+ * @method static array availableToday(int $duration, Carbon $openingTime = null)
+ * @method static array availableOn(Carbon $today, int $durationMinutes, Carbon $openingTime = null)
+ * @method static boolean isShouldntAdd(Carbon $opening, Carbon $closing, Carbon $start, Carbon $end)
+ * @method static array validateSchedule($start_at, $end_at = null, int $status = null)
  * @method static \Carbon\Carbon parseToCarbon($date, $reference = null)
  * @method static \H4ad\Scheduler\Models\Schedule|null parseToSchedule($value)
+ * @method static $this newInstance()
  *
  * @see \H4ad\Scheduler\Scheduler
  */
@@ -29,6 +35,6 @@ class Scheduler extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'scheduler';
+        return static::$app['scheduler']->newInstance();
     }
 }

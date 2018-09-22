@@ -47,4 +47,9 @@ return [
 	 * um horário sem informar quando acaba (uma data final).
 	 */
 	'enable_schedule_without_end' => false,
+
+	/**
+	 * Model padrão para fazer filtro dos horários agendados.
+	 */
+	'default_model' => stdClass::class
 ];

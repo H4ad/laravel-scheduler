@@ -8,6 +8,8 @@
  * @package H4ad\Scheduler
  */
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
 class SchedulerServiceProvider extends ServiceProvider
@@ -38,11 +40,11 @@ class SchedulerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Scheduler::class, function ($app) {
-            return new Scheduler($app);
-        });
-
         $this->app->alias(Scheduler::class, 'scheduler');
+
+        $this->app->singleton('scheduler', function ($app) {
+            return new Scheduler;
+        });
 
         $this->mergeConfig();
     }

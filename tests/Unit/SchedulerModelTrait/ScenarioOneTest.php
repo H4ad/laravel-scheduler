@@ -10,10 +10,11 @@
 
 use Carbon\Carbon;
 use H4ad\Scheduler\Tests\TestCase;
+use H4ad\Scheduler\Facades\Scheduler;
 use Illuminate\Support\Facades\Config;
 use H4ad\Scheduler\Tests\Unit\SampleModel;
-use H4ad\Scheduler\Exceptions\DoesNotBelong;
 use H4ad\Scheduler\Exceptions\ModelNotFound;
+use H4ad\Scheduler\Exceptions\DoesNotBelong;
 use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
 use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
 use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
@@ -217,6 +218,6 @@ class ScenarioOneTest extends TestCase
             'end_at' => Carbon::parse($schedule->end_at)
         ];
 
-        $this->assertNotContains($this->sampleModel->availableToday(45, Carbon::today()->addHour(12)), $contain);
+        $this->assertNotContains(Scheduler::availableToday(45, Carbon::today()->addHour(12)), $contain);
     }
 }

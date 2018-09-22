@@ -8,9 +8,12 @@
  * @package H4ad\Scheduler
  */
 
+use Closure;
 use Carbon\Carbon;
 use H4ad\Scheduler\Models\Schedule;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Traits\Macroable;
+use H4ad\Scheduler\Models\ScheduleStatus;
 use H4ad\Scheduler\Exceptions\CantAddWithoutEnd;
 use H4ad\Scheduler\Exceptions\IntInvalidArgument;
 use H4ad\Scheduler\Exceptions\EndCantBeforeStart;
@@ -18,74 +21,151 @@ use H4ad\Scheduler\Exceptions\CantAddWithSameStartAt;
 
 class Scheduler
 {
-    /**
-     * Laravel application
-     *
-     * @var \Illuminate\Foundation\Application
-     */
-    public $app;
+    use Macroable;
 
     /**
-     * Create a new confide instance.
+     * Query a ser executada.
      *
-     * @param \Illuminate\Foundation\Application $app
-     *
-     * @return void
+     * @var void
      */
-    public function __construct($app)
+    protected $query;
+
+    /**
+     * Tipo de model usada para validar.
+     *
+     * @var string
+     */
+    protected $model_type;
+
+    /**
+     * Closure de boot.
+     *
+     * @var Closure
+     */
+    protected static $boot;
+
+    /**
+     * Construtor da classe.
+     */
+    public function __construct()
     {
-        $this->app = $app;
+        $this->query = Schedule::query();
     }
 
     /**
-     * Escopo de uma consulta que busca horarios pela data de início.
+     * Define método executado toda vez que é gerada uma nova instância do Scheduler.
+     * Há apenas um unico parâmetro passado para a função que é o query.
      *
-     * @param string $model_type
-     * @param string|\Carbon\Carbon $start_at
-     * @param string|\Carbon\Carbon $end_at
-     * @return bool
+     * @param  \Closure $boot_method
+     * @return void
      */
-    public function hasScheduleBetween($model_type, $start_at, $end_at)
+    public function init(Closure $boot)
+    {
+        static::$boot = $boot;
+    }
+
+    /**
+     * Ignora uma lista de ids da model.
+     *
+     * @param  array  $model_ids
+     * @return $this
+     */
+    public function avoid(array $model_ids)
+    {
+        $this->query->whereNotIn('model_id', $model_ids);
+
+        return $this;
+    }
+
+    /**
+     * Verifica se há conflito de horários registrados em um intervalo de tempo.
+     *
+     * @param  \Carbon\Carbon|string $start_at
+     * @param  \Carbon\Carbon|string $end_at
+     * @return boolean
+     */
+    public function hasConflict($start_at, $end_at)
     {
         if(!Config::get('scheduler.enable_schedule_conflict'))
             return false;
 
-        return !is_null(
-            Schedule::latest()
-                ->where('model_type', $model_type)
-                ->where('start_at', '>=', $start_at)
-                ->where('end_at', '<=', $end_at)
-                ->first()
-        );
+        $this->byModel();
+        $this->whereBetween($start_at, $end_at);
+
+        return $this->query->exists();
     }
 
     /**
+     * Busca horários que estejam dentro um intervalo de tempo.
+     *
+     * @param  \Carbon\Carbon|string $start_at
+     * @param  \Carbon\Carbon|string $end_at
+     * @return $this
+     */
+    public function whereBetween($start_at, $end_at)
+    {
+        $this->query->where('start_at', '>=', $start_at)
+              ->where('end_at', '<=', $end_at);
+
+        return $this;
+    }
+
+    /**
+     * Define o tipo de model buscada.
+     *
+     * @param  string|null $model_type
+     * @return $this
+     */
+    public function byModel()
+    {
+        $this->query->where('model_type', $this->getModelType());
+
+        return $this;
+    }
+
+    /**
+     * Seta a model padrão.
+     *
+     * @param string $model_type
+     * @return $this
+     */
+    public function setModelType(string $model_type)
+    {
+        $this->model_type = $model_type;
+
+        return $this;
+    }
+
+    /**
+     * Retorna a model type.
+     *
+     * @return string
+     */
+    public function getModelType()
+    {
+        return $this->model_type ?? Config::get('scheduler.default_model');
+    }
+    /**
      * Retorna os horários disponiveis hoje para uma determinada model.
      * .
-     * @param  string  $model_type Tipo da model
-     * @param  int    $duration Serve para facilitar na hora de buscar horários livres
-     *                          que precisem ter uma certa duração.
-     * @param \Carbon\Carbon|null $openingTime Serve como referencia para buscar horários livres.
-     *                                         Se for nulo, ele busca a referencia da config.
+     * @param  int $duration Serve para facilitar na hora de buscar horários livres que precisem ter uma certa duração.
+     * @param \Carbon\Carbon|null $openingTime Serve como referencia para buscar horários livres. Se for nulo, ele busca a referencia da config.
      * @return array
      */
-    public function availableToday($model_type, $duration, $openingTime = null)
+    public function availableToday(int $duration, Carbon $openingTime = null)
     {
-        return $this->availableOn($model_type, Carbon::now(), $duration, $openingTime);
+        return $this->availableOn(Carbon::today(), $duration, $openingTime);
     }
 
     /**
      * Retorna os horários disponiveis em um determinado dia para uma certa model.
      *
-     * @param  string  $model_type Tipo da model
      * @param  \Carbon\Carbon $today Data para o qual ele irá fazer a busca.
-     * @param  int    $durationMinutes Serve para facilitar na hora de buscar horários livres
-     *                          que precisem ter uma certa duração.
-     * @param \Carbon\Carbon|null $openingTime Serve como referencia para buscar horários livres.
-     *                                         Se for nulo, ele busca a referencia da config.
+     * @param  int $durationMinutes Serve para facilitar na hora de buscar horários livres que precisem ter uma certa duração.
+     * @param  \Carbon\Carbon|null $openingTime Serve como referencia para buscar horários livres. Se for nulo, ele busca a referencia da config.
      * @return array
      */
-    public function availableOn($model_type, $today, $durationMinutes, $openingTime = null)
+    public function availableOn(Carbon $today, int $durationMinutes, Carbon $openingTime = null)
     {
         $openingTime = $openingTime ?? Carbon::parse(Config::get('scheduler.opening_time'))->setDateFrom($today);
         $closingTime = Carbon::parse(Config::get('scheduler.closing_time'))->setDateFrom($today);
@@ -99,7 +179,7 @@ class Scheduler
             $opening = Carbon::parse($openingTime->toDateTimeString());
             $closing = Carbon::parse($openingTime->toDateTimeString())->addMinutes($durationMinutes);
 
-            foreach (Schedule::where('model_type', $model_type)->orderBy('start_at', 'DESC')->cursor() as $schedule) {
+            foreach ($this->query->orderBy('start_at', 'DESC')->cursor() as $schedule) {
                 $start = Carbon::parse($schedule->start_at);
                 $begin = Carbon::parse($start->toDateString());
 
@@ -136,7 +216,7 @@ class Scheduler
      * @param  \Carbon\Carbon  $end
      * @return boolean
      */
-    private function isShouldntAdd($opening, $closing, $start, $end)
+    private function isShouldntAdd(Carbon $opening, Carbon $closing, Carbon $start, Carbon $end)
     {
         return $start <= $opening && $end >= $closing;
     }
@@ -145,8 +225,7 @@ class Scheduler
      * Valida e retorna os dados formatados de forma correta em um [array].
      *
      * @param  \Carbon\Carbon|string $start_at  Data em que será agendado, pode ser em string ou em numa classe Carbon.
-     * @param  \Carbon\Carbon|string|int|null $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon
-     *                                                  ou em int(sendo considerado os minutos de duração).
+     * @param  \Carbon\Carbon|string|int|null $end_at   Data em que acabada esse agendamento, pode ser em string, ou numa classe Carbon ou em int(sendo considerado os minutos de duração).
      * @param  int|null $status Status desse horário ao ser agendado.
      * @return array
      *
@@ -154,22 +233,27 @@ class Scheduler
      * @throws \H4ad\Scheduler\Exceptions\EndCantBeforeStart
      * @throws \H4ad\Scheduler\Exceptions\CantAddWithSameStartAt
      */
-    public function validateSchedule($model_type, $start_at, $end_at = null, $status = null)
+    public function validateSchedule($start_at, $end_at = null, int $status = null)
     {
         if(!Config::get('scheduler.enable_schedule_without_end') && is_null($end_at))
             throw new CantAddWithoutEnd;
 
         $start_at  = $this->parseToCarbon($start_at);
 
-        if(!is_null($end_at)) {
+        if(isset($end_at)) {
             $end_at = $this->parseToCarbon($end_at, $start_at);
 
             if($start_at->greaterThan($end_at))
                 throw new EndCantBeforeStart;
         }
 
-        if($this->hasScheduleBetween($model_type, $start_at, $end_at ?? $start_at))
+        if(isset($status))
+            ScheduleStatus::findOrFail($status);
+
+        if($this->hasConflict($start_at, $end_at ?? $start_at))
             throw new CantAddWithSameStartAt;
+
+        $model_type = $this->getModelType();
 
         return compact('model_type', 'start_at', 'end_at', 'status');
     }
@@ -209,5 +293,28 @@ class Scheduler
             return Schedule::find($value);
 
         return Schedule::byStartAt($value)->first();
+   }
+
+    /**
+     * Retorna uma instância do Scheduler.
+     *
+     * @return $this
+     */
+    public function newInstance()
+    {
+        return clone $this;
+    }
+
+   /**
+    * Callback apos chamar um clone.
+    *
+    * @return void
+    */
+    public function __clone()
+    {
+        $this->query = Schedule::query();
+
+        if(isset(static::$boot))
+            (static::$boot)($this);
     }
 }

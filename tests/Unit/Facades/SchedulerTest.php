@@ -44,4 +44,18 @@ class SchedulerTest extends TestCase
         $this->assertEquals($schedule->id, Scheduler::parseToSchedule(Carbon::parse($schedule->start_at))->id);
         $this->assertEquals(null, Scheduler::parseToSchedule('2012-12-12'));
     }
+
+    /**
+     * Testa o método de init.
+     *
+     * @return void
+     */
+    public function testInit()
+    {
+        Scheduler::init(function ($scheduler) {
+            $scheduler->setModelType(self::class);
+        });
+
+        $this->assertEquals(self::class, Scheduler::getModelType());
+    }
 }
